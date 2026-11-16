@@ -1,0 +1,37 @@
+# Avvio locale/produzione:  docker compose up -d --build
+# Ogni stack (app + PostgreSQL) è UNA istanza indipendente di AirlineManager.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: airline
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-airline}
+      POSTGRES_DB: airline
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airline"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      PORT: 3000
+      DATABASE_URL: postgres://airline:${POSTGRES_PASSWORD:-airline}@db:5432/airline
+      INSTANCE_NAME: ${INSTANCE_NAME:-}
+      PUBLIC_URL: ${PUBLIC_URL:-}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+      BANNED_INSTANCES: ${BANNED_INSTANCES:-}
+      FED_PEERS: ${FED_PEERS:-}
+
+volumes:
+  pgdata:

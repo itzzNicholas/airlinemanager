@@ -1,0 +1,18 @@
+{
+  "name": "airlinemanager",
+  "version": "1.0.0",
+  "description": "AirlineManager - gestionale di compagnia aerea interattivo (IT/EN/RU)",
+  "main": "server/index.js",
+  "license": "MIT",
+  "private": true,
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node server/selftest.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  }
+}
